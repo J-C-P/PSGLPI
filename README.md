@@ -22,3 +22,8 @@ Follow Microsoft directions : https://docs.microsoft.com/en-us/powershell/develo
 Use this to generate your Basic token in case you don't want to use the API token associated with your GLPI account.
 `Get-GlpiBase64Login -login mysusername -password MySuperComplicatedPassw0rd
 bXlzdXNlcm5hbWU6TXlTdXBlckNvbXBsaWNhdGVkUGFzc3cwcmQ=`
+
+
+
+
+Update in progress...
