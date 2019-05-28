@@ -16,3 +16,9 @@ Enjoy! :-)
 ## Install the Module
 Donwload the module.
 Follow Microsoft directions : https://docs.microsoft.com/en-us/powershell/developer/module/installing-a-powershell-module
+
+## Exemples
+### Generate your Basic user token
+Use this to generate your Basic token in case you don't want to use the API token associated with your GLPI account.
+`Get-GlpiBase64Login -login mysusername -password MySuperComplicatedPassw0rd
+bXlzdXNlcm5hbWU6TXlTdXBlckNvbXBsaWNhdGVkUGFzc3cwcmQ=`
