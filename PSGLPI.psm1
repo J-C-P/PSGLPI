@@ -239,6 +239,7 @@ Function Get-GlpiSearchOptions {
         foreach ($Option in $SearchOptions) {
             $item = New-Object psobject
             $Item | Add-Member -Type NoteProperty -Name ID -Value $Option.name
+            $Item | Add-Member -Type NoteProperty -Name "Field Name" -Value $Option.value.field
             $Item | Add-Member -Type NoteProperty -Name Name -Value $Option.value.name
             $Result += $item
             }
