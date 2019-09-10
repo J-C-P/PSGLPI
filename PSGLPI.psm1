@@ -381,3 +381,58 @@ Function Remove-GlpiItems {
     #$SessionToken = GetGLPISessionToken -Creds $Creds
     #Invoke-RestMethod "$($Creds.AppUrl)/killSession" -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"}
 }
+Function Remove-GlpiItems {
+    <#
+.SYNOPSIS
+    Remove a specific item by item type.
+.DESCRIPTION
+    Remove a specific item.
+.PARAMETER ItemType
+    Type of item wanted.
+    Exemples : Computer, Monitor, User, etc.
+.PARAMETER IDs
+    Array of IDs of item to remove. If only ONE criteria is present, start with a COMA!
+    Exemples : ,(114) or (110,114)
+.PARAMETER Creds
+    Credetials for the GLPI API. This is an object.
+    Exemple : $GlpiCreds = @{
+                    AppURL =     "https://[MyGlpiServer]/apirest.php"
+                    UserToken =  "c8BRf8uJHPDr1AyDTgt2zm95S6EdMAHPXK6qTxlA"
+                    AppToken =   "EaNdrm33jKDFVdK8gvFQtOf1XHki2Y4BVtPKssgl"
+                    AuthorizationType = "Basic" or "user_token"
+                    }
+.PARAMETRE Purge
+    If the itemtype have a trashbin, you can force purge (delete finally).Default: False
+.PARAMETRE History
+    Set to false to disable saving of deletion in global history. Default: True.
+.EXAMPLE
+     Remove-GlpiItems -ItemType "Monitor" -IDs 114 -Purge $true -History $false -Creds $GlpiCreds
+.INPUTS
+    None
+.OUTPUTS
+    Array
+.NOTES
+    Author:  Jean-Christophe Pirmolin #>
+    param([parameter(Mandatory=$true)][String]$ItemType, [parameter(Mandatory=$true)]$IDs, [Boolean]$Purge=$false, [Boolean]$History=$true, [parameter(Mandatory=$true)][object]$Creds)
+    # Build array of IDs.
+    if ($IDs -notcontains "ID"){
+        $ids2 = @()
+        foreach ($ID in $IDs){
+            $hash = [ordered]@{}
+            $hash.add("id" , $ID)
+            $ids2 += [pscustomobject]$hash
+        }
+        $IDs = $ids2
+    }
+    $Details = @{
+        input=$IDs
+        force_purge =  $Purge
+        history = $History}
+    $json = $Details | ConvertTo-Json
+    #if (($Details["input"] | Get-Member -MemberType Properties).Count -eq 1){
+    #    $json = $json.Remove(($lastIndex = $json.LastIndexOf("]")),1).Insert($lastIndex,"").Remove(($firstIndex = $json.IndexOf("[")),1).Insert($firstIndex,"")
+   # }
+   $SessionToken = GetGLPISessionToken -Creds $Creds
+    Invoke-RestMethod "$($Creds.AppUrl)/$($ItemType)" -Method Delete -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"} -Body $json -ContentType 'application/json'
+    Invoke-RestMethod "$($Creds.AppUrl)/killSession" -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"} -ErrorAction SilentlyContinue| Out-Null
+}
