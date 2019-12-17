@@ -15,7 +15,7 @@ Enjoy! :-)
 
 ## Install the Module
 Donwload the module.
-Follow Microsoft directions : https://docs.microsoft.com/en-us/powershell/developer/module/installing-a-powershell-module
+Follow Microsoft directions : https://docs.microsoft.com/en-us/powershell/scripting/developer/module/installing-a-powershell-module
 
 ## Exemples
 ### Generate your Basic user token
