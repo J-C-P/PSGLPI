@@ -289,7 +289,7 @@ Function Add-GlpiItem {
     $Details = @{input=$Details} 
     $SessionToken = GetGLPISessionToken -Creds $Creds
     $json = ConvertTo-Json $Details
-    $AddResult = Invoke-RestMethod "$($Creds.AppUrl)/$($ItemType)" -Method Post -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"} -Body $json -ContentType 'application/json'
+    $AddResult = Invoke-RestMethod "$($Creds.AppUrl)/$($ItemType)" -Method Post -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"} -Body ([System.Text.Encoding]::UTF8.GetBytes($json)) -ContentType 'application/json'
     Invoke-RestMethod "$($Creds.AppUrl)/killSession" -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"}
     return $AddResult
 }
@@ -337,7 +337,7 @@ Function Update-GlpiItem {
     $Details = @{input=$Details}
     $SessionToken = GetGLPISessionToken -Creds $Creds
     $json = $Details | ConvertTo-Json
-    $AddResult = Invoke-RestMethod "$($Creds.AppUrl)/$($ItemType)" -Method Put -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"} -Body $json -ContentType 'application/json'
+    $AddResult = Invoke-RestMethod "$($Creds.AppUrl)/$($ItemType)" -Method Put -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"} -Body ([System.Text.Encoding]::UTF8.GetBytes($json)) -ContentType 'application/json'
     Invoke-RestMethod "$($Creds.AppUrl)/killSession" -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"}
     return $AddResult
 }
