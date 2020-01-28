@@ -191,9 +191,9 @@ Function Search-GlpiItem {
     # Building the SearchOptions String
     $i=0
     foreach ($Criteria in $SearchOptions) {
-        if ($i -eq 0) {$StrSearchOptions = "criteria[$($i)][link]=$($Criteria[0])&criteria[$($i)][field]=$($Criteria[1])&criteria[$($i)][searchtype]=$($Criteria[2])&criteria[$($i)][value]=$($Criteria[3])"
+        if ($i -eq 0) {$StrSearchOptions = "criteria[$($i)][link]=$($Criteria[0])&criteria[$($i)][field]=$($Criteria[1])&criteria[$($i)][searchtype]=$($Criteria[2])&criteria[$($i)][value]=$($Criteria[3].replace("'","''"))"
         }
-        else {$StrSearchOptions = "$($StrSearchOptions)&criteria[$($i)][link]=$($Criteria[0])&criteria[$($i)][field]=$($Criteria[1])&criteria[$($i)][searchtype]=$($Criteria[2])&criteria[$($i)][value]=$($Criteria[3])"
+        else {$StrSearchOptions = "$($StrSearchOptions)&criteria[$($i)][link]=$($Criteria[0])&criteria[$($i)][field]=$($Criteria[1])&criteria[$($i)][searchtype]=$($Criteria[2])&criteria[$($i)][value]=$($Criteria[3].replace("'","''"))"
         }
         $i++
     }
