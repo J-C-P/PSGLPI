@@ -55,6 +55,18 @@ Function Get-GlpiItems {
                     AppToken =   "EaNdrm33jKDFVdK8gvFQtOf1XHki2Y4BVtPKssgl"
                     AuthorizationType = "Basic" or "user_token"
                     }
+.PARAMETER QueryOptions
+    Options to pass to the query. See API documentation. 
+    Separator is "&"
+    expand_dropdowns (default: false): show dropdown name instead of id. Optional.
+    get_hateoas (default: true): Show relation of item in a links attribute. Optional.
+    only_id (default: false): keep only id keys in returned data. Optional.
+    sort (default 1): name of the field to sort by. Optional.
+    order (default ASC): ASC - Ascending sort / DESC Descending sort. Optional.
+    searchText (default NULL): array of filters to pass on the query (with key = field and value the text to search)
+    is_deleted (default: false): Return deleted element. Optional.
+    add_keys_names: Retrieve friendly names. Array containing fkey(s) and/or "id". Optional.
+    Exemple : expand_dropdowns=true&get_hateoas=false
 .EXAMPLE
      Get-GlpiItems -ItemType "Location" -Range "0-99" -Creds $GlpiCreds
 .INPUTS
@@ -63,11 +75,11 @@ Function Get-GlpiItems {
     Array
 .NOTES
     Author:  Jean-Christophe Pirmolin #>
-    param([parameter(Mandatory=$true)][String]$ItemType,[parameter(Mandatory=$false)][String]$Range="0-999",[parameter(Mandatory=$true)][Object]$Creds)
+    param([parameter(Mandatory=$true)][String]$ItemType,[parameter(Mandatory=$false)][String]$Range="0-999",[parameter(Mandatory=$true)][Object]$Creds, $QueryOptions="")
 
     $UserToken = $Creds.UserToken
     $SessionToken = GetGLPISessionToken -Creds $Creds
-    $SearchResult = Invoke-RestMethod "$($Creds.AppUrl)/$($ItemType)/?range=$($Range)" -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"}
+    $SearchResult = Invoke-RestMethod "$($Creds.AppUrl)/$($ItemType)/?range=$($Range)&$($QueryOptions)" -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"}
     if ($SearchResult.Count -ge 1) {$SearchResult}
     else {$false}
     Invoke-RestMethod "$($Creds.AppUrl)/killSession" -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"}
@@ -94,6 +106,18 @@ Function Get-GlpiItem {
                     AppToken =   "EaNdrm33jKDFVdK8gvFQtOf1XHki2Y4BVtPKssgl"
                     AuthorizationType = "Basic" or "user_token"
                     }
+.PARAMETER QueryOptions
+    Options to pass to the query. See API documentation. 
+    Separator is "&"
+    expand_dropdowns (default: false): show dropdown name instead of id. Optional.
+    get_hateoas (default: true): Show relation of item in a links attribute. Optional.
+    only_id (default: false): keep only id keys in returned data. Optional.
+    sort (default 1): name of the field to sort by. Optional.
+    order (default ASC): ASC - Ascending sort / DESC Descending sort. Optional.
+    searchText (default NULL): array of filters to pass on the query (with key = field and value the text to search)
+    is_deleted (default: false): Return deleted element. Optional.
+    add_keys_names: Retrieve friendly names. Array containing fkey(s) and/or "id". Optional.
+    Exemple : expand_dropdowns=true&get_hateoas=false
 .EXAMPLE
      Get-GlpiItem -ItemType "Monitor" -ID 114 -Creds $GlpiCreds
 .INPUTS
