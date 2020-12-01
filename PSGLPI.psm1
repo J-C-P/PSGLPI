@@ -326,15 +326,16 @@ Function Update-GlpiItem {
 .DESCRIPTION
     Update an object into GLPI.
 .PARAMETER ItemType
-    Type of item wanted.
+    Type of item want to update.
     Note : you can use 'AllAssets' itemtype to retrieve a combination of all asset's types.
     Exemples : Computer, Monitor, User, etc.
+.PARAMETER ID
+    ID of item you want to update.
+    Exemples : 117
 .PARAMETER Details
     Describe the details of the object you wan to update into GLPI.
     It is expected to be an object that you can create using :
-    ID field is mandatory.
     $Details = @{
-        id="107"
         name="PC99999"
         serial="01.02.03.04.05"}
 .PARAMETER Creds
@@ -347,10 +348,9 @@ Function Update-GlpiItem {
                     }
 .EXAMPLE
     $Details = @{
-        id="107"
         name="PC99999"
         serial="01.02.03.04.05"}
-    Update-GlpiItem -ItemType "computer" -Details $Details -Creds $GlpiCreds
+    Update-GlpiItem -ItemType "computer" -Details $Details -Creds $GlpiCreds -ID 117
 .INPUTS
     None
 .OUTPUTS
@@ -361,7 +361,7 @@ Function Update-GlpiItem {
     $Details = @{input=$Details}
     $SessionToken = GetGLPISessionToken -Creds $Creds
     $json = $Details | ConvertTo-Json
-    $AddResult = Invoke-RestMethod "$($Creds.AppUrl)/$($ItemType)" -Method Put -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"} -Body ([System.Text.Encoding]::UTF8.GetBytes($json)) -ContentType 'application/json'
+    $AddResult = Invoke-RestMethod "$($Creds.AppUrl)/$($ItemType)/$($ID)" -Method Put -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"} -Body ([System.Text.Encoding]::UTF8.GetBytes($json)) -ContentType 'application/json'
     Invoke-RestMethod "$($Creds.AppUrl)/killSession" -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"}
     return $AddResult
 }
