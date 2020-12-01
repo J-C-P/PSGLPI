@@ -6,7 +6,7 @@ Function GetGLPISessionToken {
     #Write-Host " Enter Function"
     $Creds.AuthorizationType
     if (("Basic","user_token") -ccontains $Creds.AuthorizationType) {Invoke-RestMethod "$($Creds.AppURL)/initSession" -Headers @{"Content-Type" = "application/json";"Authorization" = "$($Creds.AuthorizationType) $($Creds.UserToken)";"App-Token"=$Creds.AppToken}}
-    else {Write-Host 'AuthorizationType MUST be "user-token" or "Basic". This is Case Sensitive.' -ForegroundColor Red}
+    else {Write-Host 'AuthorizationType MUST be "user_token" or "Basic". This is Case Sensitive.' -ForegroundColor Red}
 }
 
 function Get-GlpiBase64Login {
