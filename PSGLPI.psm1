@@ -327,7 +327,6 @@ Function Update-GlpiItem {
     Update an object into GLPI.
 .PARAMETER ItemType
     Type of item want to update.
-    Note : you can use 'AllAssets' itemtype to retrieve a combination of all asset's types.
     Exemples : Computer, Monitor, User, etc.
 .PARAMETER ID
     ID of item you want to update.
