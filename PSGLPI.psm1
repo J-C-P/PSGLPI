@@ -318,6 +318,67 @@ Function Add-GlpiItem {
     return $AddResult
 }
 
+Function Add-GlpiSubItem {
+        <#
+.SYNOPSIS
+    Add a sub object into GLPI.
+.DESCRIPTION
+    Add a sub object (or multiple objects) into GLPI.
+.PARAMETER ItemType
+    Type of PARENT item.
+    Exemples : Computer, Monitor, User, Ticket, etc.
+.PARAMETER ID
+    ID of the PARENT item. 
+    Exemples : 114
+.PARAMETER Details
+    Describe the details of the sub object you wan to add into GLPI.
+    It is expected to be a sub object that you can create using :
+    $Details = @{
+        name="internal"
+        IP="127.0.0.1"}
+.PARAMETER SubItemType
+    Type of SUB item you want to add.
+    Exemple : ITILFolowup for a ticket, Networkname for a network device, etc.
+    Note : If the SubItemType is a "Document_Item", "name" and "_filename" are requested details.
+.PARAMETER Creds
+    Credetials for the GLPI API. This is an object.
+    Exemple : $GlpiCreds = @{
+                    AppURL =     "https://[MyGlpiServer]/apirest.php"
+                    UserToken =  "c8BRf8uJHPDr1AyDTgt2zm95S6EdMAHPXK6qTxlA"
+                    AppToken =   "EaNdrm33jKDFVdK8gvFQtOf1XHki2Y4BVtPKssgl"
+                    AuthorizationType = "Basic" or "user_token"
+                    }
+.EXAMPLE
+    $Details = @{
+        name="PC99999"
+        serial="01.02.03.04.05"}
+    Add-GlpiItem -ItemType "computer" -Details $Details -Creds $GlpiCreds
+.INPUTS
+    None
+.OUTPUTS
+    Array
+.NOTES
+    Author:  Jean-Christophe Pirmolin #> 
+    param([parameter(Mandatory=$true)][String]$ItemType,[parameter(Mandatory=$true)][Int]$ID,[parameter(Mandatory=$true)][String]$SubItemType,[parameter(Mandatory=$true)][Object]$Details,[parameter(Mandatory=$true)][Object]$Creds)
+    $SessionToken = GetGLPISessionToken -Creds $Creds
+    if ($SubItemType -eq "Document") {
+        $FileContent = [System.IO.File]::ReadAllBytes($Details._filename)
+        $uploadManifest = @{
+            uploadManifest= @{input = $Details}
+            filename= @($FileContent)
+        }
+        $json = ConvertTo-Json $uploadManifest
+        Invoke-RestMethod "$($Creds.AppUrl)/$($ItemType)/$($ID)/$($SubItemType)" -Method Post -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"} -Body ([System.Text.Encoding]::UTF8.GetBytes($json)) -ContentType 'multipart/data'
+    }
+    else {
+        $Details = @{input=$Details} 
+        $json = ConvertTo-Json $Details
+        $AddResult = Invoke-RestMethod "$($Creds.AppUrl)/$($ItemType)/$($ID)/$($SubItemType)" -Method Post -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"} -Body ([System.Text.Encoding]::UTF8.GetBytes($json)) -ContentType 'application/json'
+    }
+    Invoke-RestMethod "$($Creds.AppUrl)/killSession" -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"}
+    return $AddResult
+}
+
 
 Function Update-GlpiItem {
     <#
