@@ -520,3 +520,164 @@ Function Remove-GlpiItems {
     Invoke-RestMethod "$($Creds.AppUrl)/$($ItemType)" -Method Delete -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"} -Body $json -ContentType 'application/json'
     Invoke-RestMethod "$($Creds.AppUrl)/killSession" -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"} -ErrorAction SilentlyContinue| Out-Null
 }
+
+
+Function Get-GlpiFieldLock {
+<#
+.SYNOPSIS
+    List a field lock(s) of an item.
+.DESCRIPTION
+    Get the list of field locks of an item. This requires that FusionInventory plugin is installed.
+.PARAMETER ItemType
+    Type of item to retrieve the list of field locks on.
+    Exemples : Computer, Monitor, Printer, etc.
+.PARAMETER Id
+    ID of item to retrieve the list of field locks on.
+    Exemple : 1600
+.PARAMETER Creds
+    Credetials for the GLPI API. This is an object.
+    Exemple : $GlpiCreds = @{
+                    AppURL =     "https://[MyGlpiServer]/apirest.php"
+                    UserToken =  "c8BRf8uJHPDr1AyDTgt2zm95S6EdMAHPXK6qTxlA"
+                    AppToken =   "EaNdrm33jKDFVdK8gvFQtOf1XHki2Y4BVtPKssgl"
+                    AuthorizationType = "Basic" or "user_token"
+                    }
+.EXAMPLE
+    Get-GlpiFieldLock -ItemType "printer" -ID 1600 -Creds $GlpiCreds
+.INPUTS
+    None
+.OUTPUTS
+    Array of strings
+.NOTES
+    Author:  Jean-Christophe Pirmolin #> 
+    param([parameter(Mandatory=$true)][String]$ItemType,[parameter(Mandatory=$true)][Int]$ID,[parameter(Mandatory=$true)][Object]$Creds)
+    $tablename = "glpi_$($ItemType)s"
+    $ExistingLocks = Get-GlpiItems -Creds $GlpiCreds -ItemType PluginFusioninventoryLock -Range 0-999999999 | ? {$_.tablename -eq $tablename -and $_.items_id -eq $id}
+    if ($ExistingLocks) {
+        $LocksArray=$ExistingLocks.tablefields.trim(@("[","]")).split(",")#.trim('"')
+        $LocksArray = $LocksArray.ForEach({$_ -replace '"'})
+        return $LocksArray
+        }
+    else { return "No field lock on the item"}
+}
+
+Function Add-GlpiFieldLock {
+<#
+.SYNOPSIS
+    Add a lock on a field of an item.
+.DESCRIPTION
+    Add a lock on a field of an item. This requires that FusionInventory plugin is installed.
+.PARAMETER ItemType
+    Type of item to manipulate.
+    Exemples : Computer, Monitor, Printer, etc.
+.PARAMETER Id
+    ID of item to manipulate.
+    Exemple : 1600
+.PARAMETER Field
+    The field you want to lock.
+    Exemples : serial, comment, otherserial, etc.
+.PARAMETER Creds
+    Credetials for the GLPI API. This is an object.
+    Exemple : $GlpiCreds = @{
+                    AppURL =     "https://[MyGlpiServer]/apirest.php"
+                    UserToken =  "c8BRf8uJHPDr1AyDTgt2zm95S6EdMAHPXK6qTxlA"
+                    AppToken =   "EaNdrm33jKDFVdK8gvFQtOf1XHki2Y4BVtPKssgl"
+                    AuthorizationType = "Basic" or "user_token"
+                    }
+.EXAMPLE
+    Add-GlpiFieldLock -ItemType "printer" -ID 1600 -Field otherserial -Creds $GlpiCreds
+.INPUTS
+    None
+.OUTPUTS
+    None
+.NOTES
+    Author:  Jean-Christophe Pirmolin #> 
+    param([parameter(Mandatory=$true)][String]$ItemType,[parameter(Mandatory=$true)][Int]$ID,[parameter(Mandatory=$true)][String]$Field,[parameter(Mandatory=$true)][Object]$Creds)
+    $tablename = "glpi_$($ItemType)s"
+    $ExistingLocks = Get-GlpiItems -Creds $GlpiCreds -ItemType PluginFusioninventoryLock -Range 0-999999999 | ? {$_.tablename -eq $tablename -and $_.items_id -eq $id}
+    if ($ExistingLocks) {
+        $LocksArray=$ExistingLocks.tablefields.trim(@("[","]")).split(",")#.trim('"')
+        $LocksArray = $LocksArray.ForEach({$_ -replace '"'})
+        if ($LocksArray -icontains $Field) {
+            return "already locked"
+            }
+        else {
+            $LocksArray.Add($Field)
+            $LocksString = "[" + (($LocksArray.ForEach({ '"' + $_ + '"' })) -join ",") + "]"
+            $Details = @{
+                id=$ExistingLocks.id
+                tablefields=$LocksString}
+            $return = Update-GlpiItem -ItemType "PluginFusioninventoryLock" -Details $Details -Creds $GlpiCreds
+            return $return
+            }
+        }
+    else {
+        $LocksArray = @($Field)
+        $LocksString = "[" + (($LocksArray.ForEach({ '"' + $_ + '"' })) -join ",") + "]"
+        $Details = @{
+            tablename=$tablename
+            items_id=$ID
+            tablefields=$LocksString}
+        $return = Add-GlpiItem -ItemType "PluginFusioninventoryLock" -Details $Details -Creds $GlpiCreds
+        return $return
+        }
+}
+
+Function Remove-GlpiFieldLock {
+<#
+.SYNOPSIS
+    Remove a lock on a field of an item.
+.DESCRIPTION
+    Remove a lock on a field of an item. This requires that FusionInventory plugin is installed.
+.PARAMETER ItemType
+    Type of item to manipulate.
+    Exemples : Computer, Monitor, Printer, etc.
+.PARAMETER Id
+    ID of item to manipulate.
+    Exemple : 1600
+.PARAMETER Field
+    The field you want to unlock.
+    Exemples : serial, comment, otherserial, etc.
+.PARAMETER Creds
+    Credetials for the GLPI API. This is an object.
+    Exemple : $GlpiCreds = @{
+                    AppURL =     "https://[MyGlpiServer]/apirest.php"
+                    UserToken =  "c8BRf8uJHPDr1AyDTgt2zm95S6EdMAHPXK6qTxlA"
+                    AppToken =   "EaNdrm33jKDFVdK8gvFQtOf1XHki2Y4BVtPKssgl"
+                    AuthorizationType = "Basic" or "user_token"
+                    }
+.EXAMPLE
+    Remove-GlpiFieldLock -ItemType "printer" -ID 1600 -Field otherserial -Creds $GlpiCreds
+.INPUTS
+    None
+.OUTPUTS
+    None
+.NOTES
+    Author:  Jean-Christophe Pirmolin #> 
+    param([parameter(Mandatory=$true)][String]$ItemType,[parameter(Mandatory=$true)][Int]$ID,[parameter(Mandatory=$true)][String]$Field,[parameter(Mandatory=$true)][Object]$Creds)
+    $tablename = "glpi_$($ItemType)s"
+    $ExistingLocks = Get-GlpiItems -Creds $GlpiCreds -ItemType PluginFusioninventoryLock -Range 0-999999999 | ? {$_.tablename -eq $tablename -and $_.items_id -eq $id}
+    if ($ExistingLocks) {
+        $LocksArray=$ExistingLocks.tablefields.trim(@("[","]")).split(",")#.trim('"')
+        $LocksArray = $LocksArray.ForEach({$_ -replace '"'})
+        if ($LocksArray -icontains $Field) {
+            # Need to unlock
+            $LocksArray.remove($field)
+            if ($LocksArray.Count -gt 0) {
+                $LocksString = "[" + (($LocksArray.ForEach({ '"' + $_ + '"' })) -join ",") + "]"
+                $Details = @{
+                    id=$ExistingLocks.id
+                    tablefields=$LocksString}
+                $return = Update-GlpiItem -ItemType "PluginFusioninventoryLock" -Details $Details -Creds $GlpiCreds
+                }
+            else {
+                $return = Remove-GlpiItems -ItemType "PluginFusioninventoryLock" -Creds $GlpiCreds -IDs $ExistingLocks.id
+                }
+            return $return
+            }
+        else {
+            return "No lock on this field"
+            }
+        }
+    else { return "No field lock on the item"}
+}
