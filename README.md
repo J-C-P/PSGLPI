@@ -17,7 +17,7 @@ Enjoy! :-)
 Donwload the module.
 Follow Microsoft directions : https://docs.microsoft.com/en-us/powershell/scripting/developer/module/installing-a-powershell-module
 
-## Use it directly from GITHUB
+## Or use it directly from GITHUB
 Insert the folowwing lines in your script. It will download the module from GitHub and import it in your Powershell session.
 
 `Invoke-WebRequest -Uri "https://raw.githubusercontent.com/J-C-P/PSGLPI/master/PSGLPI.psm1" -OutFile "$env:TEMP\PSGLPI.psm1"
