@@ -458,9 +458,9 @@ Function Remove-GlpiItem {
     Array
 .NOTES
     Author:  Jean-Christophe Pirmolin #>
-    param([parameter(Mandatory=$true)][String]$ItemType, [parameter(Mandatory=$true)]$IDs, [Boolean]$Purge=$false, [Boolean]$History=$true, [parameter(Mandatory=$true)][object]$Creds)
+    #param([parameter(Mandatory=$true)][String]$ItemType, [parameter(Mandatory=$true)]$IDs, [Boolean]$Purge=$false, [Boolean]$History=$true, [parameter(Mandatory=$true)][object]$Creds)
     # Build array of IDs.
-    $IDs.gettype()
+    #$IDs.gettype()
     #$SessionToken = GetGLPISessionToken -Creds $Creds
     #Invoke-RestMethod "$($Creds.AppUrl)/killSession" -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"}
 }
