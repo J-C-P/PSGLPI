@@ -425,20 +425,19 @@ Function Update-GlpiItem {
     Invoke-RestMethod "$($Creds.AppUrl)/killSession" -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"}
     return $AddResult
 }
-
-Function Remove-GlpiItems {
+<#
+Function Remove-GlpiItem {
     <#
 .SYNOPSIS
-    Get a specific item by item type.
+    Remove a specific item.
 .DESCRIPTION
-    Retrieve a specific item.
-    Return the instance fields of item identified by id
+    Remove a specific item.
 .PARAMETER ItemType
-    Type of item wanted. 
+    Type of item you want to remove. 
     Exemples : Computer, Monitor, User, etc.
-.PARAMETER IDs
-    Array of IDs of item to remove. If only ONE criteria is present, start with a COMA!
-    Exemples : ,(114) or (110,114)
+.PARAMETER ID
+    ID of item to remove. 
+    Exemples : ,114
 .PARAMETER Creds
     Credetials for the GLPI API. This is an object.
     Exemple : $GlpiCreds = @{
@@ -452,7 +451,7 @@ Function Remove-GlpiItems {
 .PARAMETRE History
     Set to false to disable saving of deletion in global history. Default: True.
 .EXAMPLE
-     Remove-GlpiItems -ItemType "Monitor" -IDs 114 -Purge $true -History $false -Creds $GlpiCreds
+     Remove-GlpiItem -ItemType "Monitor" -IDs 114 -Purge $true -History $false -Creds $GlpiCreds
 .INPUTS
     None
 .OUTPUTS
@@ -465,6 +464,8 @@ Function Remove-GlpiItems {
     #$SessionToken = GetGLPISessionToken -Creds $Creds
     #Invoke-RestMethod "$($Creds.AppUrl)/killSession" -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"}
 }
+#>
+
 Function Remove-GlpiItems {
     <#
 .SYNOPSIS
