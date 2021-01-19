@@ -426,45 +426,6 @@ Function Update-GlpiItem {
     return $AddResult
 }
 
-Function Remove-GlpiItem {
-    <#
-.SYNOPSIS
-    Remove a specific item.
-.DESCRIPTION
-    Remove a specific item.
-.PARAMETER ItemType
-    Type of item you want to remove. 
-    Exemples : Computer, Monitor, User, etc.
-.PARAMETER ID
-    ID of item to remove. 
-    Exemples : ,114
-.PARAMETER Creds
-    Credetials for the GLPI API. This is an object.
-    Exemple : $GlpiCreds = @{
-                    AppURL =     "https://[MyGlpiServer]/apirest.php"
-                    UserToken =  "c8BRf8uJHPDr1AyDTgt2zm95S6EdMAHPXK6qTxlA"
-                    AppToken =   "EaNdrm33jKDFVdK8gvFQtOf1XHki2Y4BVtPKssgl"
-                    AuthorizationType = "Basic" or "user_token"
-                    }
-.PARAMETRE Purge
-    If the itemtype have a trashbin, you can force purge (delete finally).Default: False
-.PARAMETRE History
-    Set to false to disable saving of deletion in global history. Default: True.
-.EXAMPLE
-     Remove-GlpiItem -ItemType "Monitor" -IDs 114 -Purge $true -History $false -Creds $GlpiCreds
-.INPUTS
-    None
-.OUTPUTS
-    Array
-.NOTES
-    Author:  Jean-Christophe Pirmolin #>
-    #param([parameter(Mandatory=$true)][String]$ItemType, [parameter(Mandatory=$true)]$IDs, [Boolean]$Purge=$false, [Boolean]$History=$true, [parameter(Mandatory=$true)][object]$Creds)
-    # Build array of IDs.
-    #$IDs.gettype()
-    #$SessionToken = GetGLPISessionToken -Creds $Creds
-    #Invoke-RestMethod "$($Creds.AppUrl)/killSession" -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"}
-}
-
 
 Function Remove-GlpiItems {
     <#
