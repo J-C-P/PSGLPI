@@ -17,6 +17,13 @@ Enjoy! :-)
 Donwload the module.
 Follow Microsoft directions : https://docs.microsoft.com/en-us/powershell/scripting/developer/module/installing-a-powershell-module
 
+## Use it directly from GITHUB
+Insert the folowwing lines in your script. It will download the module from GitHub and import it in your Powershell session.
+
+`Invoke-WebRequest -Uri "https://raw.githubusercontent.com/J-C-P/PSGLPI/master/PSGLPI.psm1" -OutFile "$env:TEMP\PSGLPI.psm1"
+Import-Module "$env:TEMP\PSGLPI.psm1" -Force`
+
+
 ## Exemples
 ### Generate your Basic user token
 Use this to generate your Basic token in case you don't want to use the API token associated with your GLPI account.
