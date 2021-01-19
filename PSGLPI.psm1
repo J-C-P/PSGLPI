@@ -527,7 +527,6 @@ Function Get-GlpiFieldLock {
         $LocksArray = $LocksArray.ForEach({$_ -replace '"'})
         return $LocksArray
         }
-    else { return "No field lock on the item"}
 }
 
 Function Add-GlpiFieldLock {
