@@ -425,7 +425,7 @@ Function Update-GlpiItem {
     Invoke-RestMethod "$($Creds.AppUrl)/killSession" -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"}
     return $AddResult
 }
-<#
+
 Function Remove-GlpiItem {
     <#
 .SYNOPSIS
@@ -464,7 +464,7 @@ Function Remove-GlpiItem {
     #$SessionToken = GetGLPISessionToken -Creds $Creds
     #Invoke-RestMethod "$($Creds.AppUrl)/killSession" -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"}
 }
-#>
+
 
 Function Remove-GlpiItems {
     <#
