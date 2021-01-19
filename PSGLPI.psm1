@@ -449,8 +449,10 @@ Function Remove-GlpiItems {
                     }
 .PARAMETRE Purge
     If the itemtype have a trashbin, you can force purge (delete finally).Default: False
+    Exemple : false, true
 .PARAMETRE History
     Set to false to disable saving of deletion in global history. Default: True.
+    Exemple : false, true
 .EXAMPLE
      Remove-GlpiItems -ItemType "Monitor" -IDs 114 -Purge $true -History $false -Creds $GlpiCreds
 .INPUTS
@@ -459,7 +461,13 @@ Function Remove-GlpiItems {
     Array
 .NOTES
     Author:  Jean-Christophe Pirmolin #>
-    param([parameter(Mandatory=$true)][String]$ItemType, [parameter(Mandatory=$true)]$IDs, [Boolean]$Purge=$false, [Boolean]$History=$true, [parameter(Mandatory=$true)][object]$Creds)
+    param(
+        [parameter(Mandatory=$true)][String]$ItemType, 
+        [parameter(Mandatory=$true)][Array]$IDs, 
+        [parameter(Mandatory=$true)][object]$Creds,
+        [parameter(Mandatory=$false)][string]$Purge="false", 
+        [parameter(Mandatory=$false)][string]$History="true")
+    
     # Build array of IDs.
     if ($IDs -notcontains "ID"){
         $ids2 = @()
@@ -472,7 +480,7 @@ Function Remove-GlpiItems {
     }
     $Details = @{
         input=$IDs
-        force_purge =  $Purge
+        force_purge = $Purge
         history = $History}
     $json = $Details | ConvertTo-Json
     #if (($Details["input"] | Get-Member -MemberType Properties).Count -eq 1){
@@ -482,7 +490,6 @@ Function Remove-GlpiItems {
     Invoke-RestMethod "$($Creds.AppUrl)/$($ItemType)" -Method Delete -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"} -Body $json -ContentType 'application/json'
     Invoke-RestMethod "$($Creds.AppUrl)/killSession" -Headers @{"session-token"=$SessionToken.session_token; "App-Token" = "$($Creds.AppToken)"} -ErrorAction SilentlyContinue| Out-Null
 }
-
 
 Function Get-GlpiFieldLock {
 <#
