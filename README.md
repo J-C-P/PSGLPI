@@ -20,9 +20,9 @@ Follow Microsoft directions : https://docs.microsoft.com/en-us/powershell/script
 ## Or use it directly from GITHUB
 Insert the folowwing lines in your script. It will download the module from GitHub and import it in your Powershell session.
 
-`[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/J-C-P/PSGLPI/master/PSGLPI.psm1" -OutFile "$env:TEMP\PSGLPI.psm1"
-Import-Module "$env:TEMP\PSGLPI.psm1" -Force`
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/J-C-P/PSGLPI/master/PSGLPI.psm1" -OutFile "$env:TEMP\PSGLPI.psm1"
+    Import-Module "$env:TEMP\PSGLPI.psm1" -Force
 
 
 ## Exemples
